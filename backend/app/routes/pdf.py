@@ -37,8 +37,9 @@ ALLOWED_CONTENT_TYPES = {
     response_model=PDFAnalysisResponse,
     summary="Upload and analyze a PDF",
     description=(
-        "Extracts text from normal or scanned PDFs and "
-        "provides rule-based and optional AI-powered analysis."
+        "Extracts text from normal or scanned PDFs "
+        "and provides rule-based and optional "
+        "AI-powered analysis."
     ),
 )
 async def analyze_pdf(
@@ -85,6 +86,9 @@ async def analyze_pdf(
                 detail="File size exceeds the 10 MB limit.",
             )
 
+        # ---------------------------------------------------------
+        # Step 1: Try normal PDF text extraction using PyMuPDF
+        # ---------------------------------------------------------
         try:
             extracted_text, page_count = (
                 extract_text_from_pdf(
@@ -98,7 +102,12 @@ async def analyze_pdf(
                 detail=str(exc),
             ) from exc
 
-        if not extracted_text:
+        # ---------------------------------------------------------
+        # Step 2: If no selectable text is found,
+        #         use Tesseract OCR on the scanned PDF.
+        # ---------------------------------------------------------
+        if not extracted_text.strip():
+
             try:
                 extracted_text, page_count = (
                     extract_text_from_scanned_pdf(
@@ -112,7 +121,7 @@ async def analyze_pdf(
                     detail=str(exc),
                 ) from exc
 
-            if not extracted_text:
+            if not extracted_text.strip():
                 raise HTTPException(
                     status_code=status.HTTP_422_UNPROCESSABLE_ENTITY,
                     detail=(
@@ -127,6 +136,9 @@ async def analyze_pdf(
         else:
             file_type = "PDF"
 
+        # ---------------------------------------------------------
+        # Step 3: Rule-based content analysis
+        # ---------------------------------------------------------
         try:
             analysis = analyze_content(
                 extracted_text
@@ -138,7 +150,9 @@ async def analyze_pdf(
                 detail=str(exc),
             ) from exc
 
-        # AI is an enhancement, not a hard dependency.
+        # ---------------------------------------------------------
+        # Step 4: Optional Gemini AI analysis
+        # ---------------------------------------------------------
         try:
             ai_result = generate_ai_analysis(
                 extracted_text
@@ -150,10 +164,13 @@ async def analyze_pdf(
                 )
 
         except AIAnalysisError:
-            # Keep the rule-based analysis if
-            # the external AI service fails.
+            # AI failure should not prevent the
+            # rule-based analysis from being returned.
             analysis["ai_analysis"] = None
 
+        # ---------------------------------------------------------
+        # Step 5: Calculate basic text statistics
+        # ---------------------------------------------------------
         word_count = len(
             extracted_text.split()
         )
@@ -162,6 +179,9 @@ async def analyze_pdf(
             extracted_text
         )
 
+        # ---------------------------------------------------------
+        # Step 6: Return structured response
+        # ---------------------------------------------------------
         return PDFAnalysisResponse(
             filename=filename,
             file_type=file_type,
