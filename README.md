@@ -4,7 +4,7 @@ A full-stack web application that analyzes social media content extracted from P
 
 ## Live Application
 
-https://social-media-content-analyzer-q0rxpqpzp-kopal.vercel.app/
+[Live Demo](https://social-media-content-analyzer-plum.vercel.app)
 
 ## Backend API
 
