@@ -1,149 +1,184 @@
 # Social Media Content Analyzer
 
-An AI-powered web application that analyzes content extracted from PDF documents and images, evaluates its social media engagement potential, and provides actionable suggestions to improve the content.
+A full-stack web application that analyzes social media content extracted from PDF and image files and provides engagement-focused insights and content improvement recommendations.
 
-The application supports both standard PDFs and scanned documents/images using text extraction and OCR, followed by AI-powered content analysis.
+## Live Application
+
+https://social-media-content-analyzer-q0rxpqpzp-kopal.vercel.app/
+
+## Backend API
+
+https://social-media-content-analyzer-joed.onrender.com
+
+## API Documentation
+
+https://social-media-content-analyzer-joed.onrender.com/docs
 
 ---
 
 ## Features
 
-### 📄 Document Upload
-- Upload PDF documents
-- Upload JPG, JPEG, and PNG images
-- Drag-and-drop support
+- PDF file upload
+- JPG, JPEG, and PNG image upload
+- Drag-and-drop file upload
 - File picker support
-- File size validation
-
-### 🔍 Text Extraction
-- Extract text from text-based PDFs
-- Preserve readable document structure
-- OCR support for scanned/image-based documents
-- Tesseract-based text recognition for images and scanned PDFs
-
-### 🤖 AI Content Analysis
-The extracted content is analyzed using Google Gemini to generate:
-
-- Engagement potential score
-- Content strengths
-- Areas for improvement
-- Actionable suggestions
-- Improved content version
+- PDF text extraction using PyMuPDF
+- OCR-based text extraction using Tesseract
+- Scanned PDF processing
+- Content quality analysis
+- Engagement potential scoring
+- Hook analysis
+- Clarity analysis
+- Call-to-action analysis
+- Hashtag analysis
+- Readability analysis
+- AI-powered content analysis using Google Gemini
+- Content strengths and weaknesses
+- Actionable improvement suggestions
+- Improved content generation
 - Recommended tone
 - Recommended content type
-
-### 📊 Content Metrics
-The analyzer evaluates different content characteristics including:
-
-- Hook
-- Clarity
-- Call-to-action
-- Hashtags
-- Readability
-
-### 🎨 User Interface
-- Clean and responsive React interface
-- Drag-and-drop upload area
 - Loading states
 - Error handling
-- Analysis dashboard
-- Copy improved content functionality
-- Expandable extracted text section
-- Mobile-friendly layout
-
----
-
-## Application Flow
-
-```text
-                  User
-                   │
-                   ▼
-          Upload PDF / Image
-                   │
-                   ▼
-            React Frontend
-                   │
-                   │ HTTP Request
-                   ▼
-             FastAPI Backend
-                   │
-          ┌────────┴────────┐
-          │                 │
-          ▼                 ▼
-     PDF Extraction       OCR
-          │                 │
-          └────────┬────────┘
-                   ▼
-             Extracted Text
-                   │
-                   ▼
-              Gemini AI
-                   │
-                   ▼
-          Content Analysis
-                   │
-        ┌──────────┼──────────┐
-        ▼          ▼          ▼
-     Score     Suggestions   Rewrite
-                   │
-                   ▼
-             Results UI
-```
+- Responsive user interface
+- REST API using FastAPI
 
 ---
 
 ## Tech Stack
 
 ### Frontend
+
 - React
 - Vite
 - JavaScript
 - CSS
-- Lucide React
 
 ### Backend
+
 - Python
 - FastAPI
 - Uvicorn
 - PyMuPDF
 - Tesseract OCR
+- Pytesseract
 - Pillow
-
-### AI
 - Google Gemini API
 
 ### Deployment
-- Frontend: Vercel
-- Backend: Render
+
+- Vercel — Frontend
+- Render — Backend
+- Docker — Backend containerization
+
+---
+
+## Architecture
+
+```text
+                         User
+                          |
+                          v
+                 React + Vite Frontend
+                          |
+                          | HTTP Requests
+                          v
+                   FastAPI Backend
+                          |
+              +-----------+-----------+
+              |                       |
+              v                       v
+        PDF Text Extraction       Tesseract OCR
+           (PyMuPDF)             (Images/Scans)
+              |                       |
+              +-----------+-----------+
+                          |
+                          v
+                   Extracted Text
+                          |
+              +-----------+-----------+
+              |                       |
+              v                       v
+       Rule-Based Analysis       Gemini AI
+              |                       |
+              +-----------+-----------+
+                          |
+                          v
+                  Analysis Results
+                          |
+                          v
+                    Frontend UI
+```
+
+---
+
+## Application Flow
+
+```text
+1. User uploads a PDF or image
+              |
+              v
+2. File validation
+              |
+              v
+3. Text extraction
+              |
+       +------+------+
+       |             |
+     PDF           Image
+       |             |
+   PyMuPDF       Tesseract
+       |             |
+       +------+------+
+              |
+              v
+4. Extracted text
+              |
+              v
+5. Rule-based content analysis
+              |
+              v
+6. Gemini AI analysis
+              |
+              v
+7. Engagement insights
+              |
+              v
+8. Improved content and recommendations
+```
 
 ---
 
 ## Project Structure
 
 ```text
-Social Media Content Analyzer/
+Social-Media-Content-Analyzer/
 │
 ├── backend/
 │   ├── app/
 │   │   ├── routes/
+│   │   │   ├── pdf.py
+│   │   │   └── image.py
+│   │   │
 │   │   ├── services/
-│   │   ├── main.py
-│   │   └── ...
+│   │   │   ├── ai_analyzer.py
+│   │   │   ├── analyzer.py
+│   │   │   ├── ocr_service.py
+│   │   │   └── pdf_extractor.py
+│   │   │
+│   │   ├── schemas.py
+│   │   └── main.py
 │   │
+│   ├── Dockerfile
 │   ├── requirements.txt
-│   ├── .env
 │   └── .env.example
 │
 ├── frontend/
+│   ├── public/
 │   ├── src/
-│   │   ├── App.jsx
-│   │   ├── App.css
-│   │   ├── index.css
-│   │   └── main.jsx
-│   │
+│   ├── index.html
 │   ├── package.json
-│   └── index.html
+│   └── ...
 │
 ├── .gitignore
 └── README.md
@@ -151,51 +186,177 @@ Social Media Content Analyzer/
 
 ---
 
-## Prerequisites
+## API Endpoints
 
-Make sure the following are installed:
-
-- Python 3.10+
-- Node.js 18+
-- npm
-- Git
-- Tesseract OCR
-
-A Google Gemini API key is also required for AI-powered analysis.
+| Method | Endpoint | Description |
+|--------|----------|-------------|
+| GET | `/` | API health/status |
+| POST | `/analyze/pdf` | Analyze PDF content |
+| POST | `/analyze/image` | Analyze image content |
 
 ---
 
-# Local Setup
+## PDF Analysis
 
-## 1. Clone the Repository
+The PDF endpoint supports both text-based and scanned PDFs.
 
-```bash
-git clone https://github.com/skopal-05/Social-Media-Content-Analyzer.git
-cd Social-Media-Content-Analyzer
+### Text-Based PDF
+
+```text
+PDF
+ |
+ v
+PyMuPDF
+ |
+ v
+Extracted Text
+ |
+ v
+Content Analysis
+ |
+ v
+Gemini AI
+ |
+ v
+Recommendations
+```
+
+### Scanned PDF
+
+```text
+Scanned PDF
+ |
+ v
+PyMuPDF Page Rendering
+ |
+ v
+Tesseract OCR
+ |
+ v
+Extracted Text
+ |
+ v
+Content Analysis
+ |
+ v
+Gemini AI
+ |
+ v
+Recommendations
 ```
 
 ---
 
-## 2. Backend Setup
+## Image Analysis
 
-Navigate to the backend:
+Supported image formats:
 
-```bash
+```text
+JPG
+JPEG
+PNG
+```
+
+Processing flow:
+
+```text
+Image
+ |
+ v
+Tesseract OCR
+ |
+ v
+Extracted Text
+ |
+ v
+Rule-Based Analysis
+ |
+ v
+Gemini AI Analysis
+ |
+ v
+Recommendations
+```
+
+---
+
+## Analysis Output
+
+The application evaluates content using factors such as:
+
+- Engagement potential
+- Hook quality
+- Clarity
+- Call-to-action effectiveness
+- Hashtag usage
+- Readability
+- Overall content quality
+
+The AI analysis provides:
+
+- Strengths
+- Weaknesses
+- Improvement suggestions
+- Improved content version
+- Recommended tone
+- Recommended content type
+
+### Example Response
+
+```json
+{
+  "engagement_potential": 85,
+  "strengths": [
+    "Clear announcement format",
+    "Direct call to action",
+    "Relevant hashtags"
+  ],
+  "weaknesses": [
+    "Limited product details",
+    "Could provide a stronger value proposition"
+  ],
+  "suggestions": [
+    "Add a key product benefit",
+    "Use a stronger call to action"
+  ],
+  "improved_version": "Improved social media content...",
+  "recommended_tone": "Conversational",
+  "recommended_content_type": "Announcement"
+}
+```
+
+---
+
+## Local Development
+
+### Prerequisites
+
+- Python 3.11+
+- Node.js 18+
+- npm
+- Tesseract OCR
+- Git
+
+---
+
+## Backend Setup
+
+Navigate to the backend directory:
+
+```powershell
 cd backend
 ```
 
 Create a virtual environment:
 
-### Windows
-
 ```powershell
-python -m venv ../venv
+python -m venv venv
 ```
 
-Activate it:
+Activate the virtual environment on Windows:
 
 ```powershell
-..\venv\Scripts\Activate.ps1
+venv\Scripts\activate
 ```
 
 Install dependencies:
@@ -204,54 +365,13 @@ Install dependencies:
 pip install -r requirements.txt
 ```
 
----
-
-## 3. Configure Environment Variables
-
-Create:
-
-```text
-backend/.env
-```
-
-Add:
-
-```env
-GEMINI_API_KEY=your_gemini_api_key_here
-GEMINI_MODEL=your_gemini_model_here
-```
-
-Never commit the actual API key to GitHub.
-
-The repository includes `.env.example` as a template.
-
----
-
-## 4. Install Tesseract OCR
-
-Tesseract OCR is required for scanned documents and image uploads.
-
-After installing Tesseract, make sure it is available in your system PATH.
-
-Verify the installation:
-
-```powershell
-tesseract --version
-```
-
-If the command is recognized, OCR is ready.
-
----
-
-## 5. Run the Backend
-
-From the `backend` directory:
+Start the backend:
 
 ```powershell
 uvicorn app.main:app --reload
 ```
 
-The API will be available at:
+The backend will run at:
 
 ```text
 http://127.0.0.1:8000
@@ -265,14 +385,12 @@ http://127.0.0.1:8000/docs
 
 ---
 
-# Frontend Setup
+## Frontend Setup
 
-Open a second terminal.
-
-Navigate to the frontend:
+Open a new terminal and navigate to the frontend directory:
 
 ```powershell
-cd "E:\Projects\Social Media Content Analyzer\frontend"
+cd frontend
 ```
 
 Install dependencies:
@@ -287,7 +405,7 @@ Start the development server:
 npm run dev
 ```
 
-The frontend will be available at:
+The frontend will run at:
 
 ```text
 http://localhost:5173
@@ -295,255 +413,178 @@ http://localhost:5173
 
 ---
 
-## Frontend Environment Variable
+## OCR Setup
 
-For local development, create:
+The application uses Tesseract OCR for extracting text from:
+
+- Images
+- Scanned PDFs
+
+Verify Tesseract installation:
+
+```powershell
+tesseract --version
+```
+
+The production backend installs Tesseract through its Docker image.
+
+---
+
+## Docker
+
+The backend is containerized using Docker to provide a consistent production environment and system-level Tesseract OCR support.
+
+Docker architecture:
 
 ```text
-frontend/.env
+Python 3.11
+    |
+    +-- Tesseract OCR
+    |
+    +-- FastAPI
+    |
+    +-- PyMuPDF
+    |
+    +-- Pytesseract
+    |
+    +-- Google Gemini
 ```
 
-with:
+Build the backend image:
 
-```env
-VITE_API_URL=http://127.0.0.1:8000
+```powershell
+docker build -t social-media-content-analyzer ./backend
 ```
 
-For production, this value should point to the deployed backend URL.
+Run locally:
 
----
-
-# API Endpoints
-
-## PDF Analysis
-
-```http
-POST /analyze/pdf
-```
-
-Accepts a PDF file and:
-
-1. Extracts text from the PDF.
-2. Uses OCR when required.
-3. Sends the extracted content for AI analysis.
-4. Returns engagement metrics and recommendations.
-
----
-
-## Image Analysis
-
-```http
-POST /analyze/image
-```
-
-Accepts:
-
-- JPG
-- JPEG
-- PNG
-
-The image is processed using OCR before AI analysis.
-
----
-
-## Health Check
-
-```http
-GET /health
-```
-
-Used to verify that the backend service is running.
-
----
-
-# Example Analysis
-
-For uploaded content, the application can return information such as:
-
-```json
-{
-  "engagement_potential": 85,
-  "strengths": [
-    "Clear announcement format",
-    "Direct call to action"
-  ],
-  "weaknesses": [
-    "Could include more specific details"
-  ],
-  "suggestions": [
-    "Add a stronger value proposition",
-    "Include a clear call-to-action"
-  ],
-  "improved_version": "Improved social media content...",
-  "recommended_tone": "Conversational",
-  "recommended_content_type": "Announcement"
-}
+```powershell
+docker run -p 8000:8000 --env-file backend/.env social-media-content-analyzer
 ```
 
 ---
 
-# Error Handling
+## Deployment
 
-The application includes basic error handling for:
+### Frontend
+
+The frontend is deployed using Vercel.
+
+Live application:
+
+https://social-media-content-analyzer-q0rxpqpzp-kopal.vercel.app/
+
+Configuration:
+
+```text
+Platform: Vercel
+Framework: Vite
+Root Directory: frontend
+Build Command: npm run build
+Output Directory: dist
+```
+
+### Backend
+
+The backend is deployed using Render.
+
+Live API:
+
+https://social-media-content-analyzer-joed.onrender.com
+
+Configuration:
+
+```text
+Platform: Render
+Runtime: Docker
+Root Directory: backend
+```
+
+The Docker image installs Tesseract OCR and the required Python dependencies before starting the FastAPI application.
+
+---
+
+## Error Handling
+
+The application handles common errors including:
 
 - Unsupported file formats
 - Empty files
-- Files larger than the allowed limit
+- Files exceeding the size limit
+- Invalid PDF files
+- Invalid image files
 - Failed text extraction
 - OCR failures
-- AI API failures
-- Backend connection failures
+- AI service failures
+- Invalid content
+- Backend/API errors
 
-The frontend displays appropriate loading and error states so users receive feedback during long-running operations.
+AI analysis is treated as an enhancement. If the Gemini API is unavailable, the application can still return the rule-based analysis.
 
 ---
 
-# AI Analysis Approach
+## Security
 
-The application follows a simple content-analysis pipeline:
+- API keys are stored using environment variables.
+- Secrets are excluded from version control.
+- API keys are not exposed in the frontend.
+- Uploaded files are validated before processing.
+- File size limits are enforced.
+- CORS is configured for the deployed frontend.
+- Production configuration is separated from local development configuration.
+
+---
+
+## Design Approach
+
+The application follows a modular full-stack architecture.
 
 ```text
-Document
-   ↓
-Text Extraction / OCR
-   ↓
-Text Cleaning
-   ↓
-Gemini AI Analysis
-   ↓
-Structured Analysis
-   ↓
-Engagement Recommendations
+Frontend
+   |
+   +-- File Upload
+   +-- User Interface
+   +-- Loading States
+   +-- Results Display
+   |
+Backend
+   |
+   +-- API Routes
+   +-- PDF Extraction
+   +-- OCR Processing
+   +-- Rule-Based Analysis
+   +-- AI Analysis
 ```
 
-The AI evaluates the content based on factors such as:
-
-- Opening hook
-- Clarity
-- Engagement potential
-- Call-to-action
-- Hashtag usage
-- Readability
-- Overall content quality
-
-It then produces actionable recommendations and an improved version of the content.
+The separation of frontend, API routes, extraction services, OCR processing, and AI analysis makes the application easier to maintain and extend.
 
 ---
 
-# Privacy & Security
-
-- API credentials are stored in environment variables.
-- `.env` files are excluded from Git.
-- API keys are never required in the frontend.
-- Uploaded files are processed by the backend for analysis.
-- Sensitive documents should not be uploaded unnecessarily.
-- Production deployments should use HTTPS and restricted CORS origins.
-
----
-
-# Deployment
-
-## Backend
-
-The FastAPI backend can be deployed using services such as Render.
-
-Recommended configuration:
-
-```text
-Root Directory:
-backend
-
-Build Command:
-pip install -r requirements.txt
-
-Start Command:
-uvicorn app.main:app --host 0.0.0.0 --port $PORT
-```
-
-Add the required environment variables in the hosting provider's dashboard.
-
----
-
-## Frontend
-
-The React/Vite frontend can be deployed using Vercel.
-
-Recommended configuration:
-
-```text
-Root Directory:
-frontend
-
-Build Command:
-npm run build
-
-Output Directory:
-dist
-```
-
-Set the production API URL:
-
-```env
-VITE_API_URL=https://your-backend-url
-```
-
----
-
-# Testing
-
-The application was tested with:
-
-- Text-based PDF documents
-- Scanned PDF documents
-- OCR-based extraction
-- AI-generated engagement analysis
-- AI-generated content improvements
-- Invalid file handling
-- Loading states
-- Frontend-backend integration
-
----
-
-# Future Improvements
-
-Potential improvements include:
-
-- User authentication
-- Social media platform-specific scoring
-- Instagram/LinkedIn/X post optimization
-- Multiple file processing
-- Analysis history
-- Export analysis as PDF
-- Advanced sentiment analysis
-- Platform-specific hashtag recommendations
-- Analytics dashboard
-- Content comparison and A/B testing
-
----
-
-# Assessment Requirements
-
-This project addresses the requested technical assessment requirements:
+## Assessment Requirements
 
 | Requirement | Implementation |
-|---|---|
-| PDF upload | ✅ |
-| Image upload | ✅ |
-| Drag-and-drop | ✅ |
-| File picker | ✅ |
-| PDF text extraction | ✅ |
-| OCR for scanned documents | ✅ |
-| AI-powered analysis | ✅ |
-| Engagement suggestions | ✅ |
-| Loading states | ✅ |
-| Error handling | ✅ |
-| Production-quality structure | ✅ |
-| Documentation | ✅ |
+|-------------|----------------|
+| PDF upload | Implemented |
+| Image upload | Implemented |
+| Drag-and-drop | Implemented |
+| File picker | Implemented |
+| PDF text extraction | PyMuPDF |
+| OCR | Tesseract |
+| AI analysis | Google Gemini |
+| Engagement recommendations | Implemented |
+| Loading states | Implemented |
+| Error handling | Implemented |
+| Documentation | README |
 
 ---
 
-## Brief Approach
+## Future Improvements
 
-The application uses a two-stage processing pipeline. First, uploaded PDFs are processed using PDF text extraction, while scanned PDFs and image files are processed through OCR using Tesseract. The resulting text is normalized and sent to the backend AI analysis service. Google Gemini evaluates the content for engagement potential, clarity, hook quality, call-to-action effectiveness, readability, and hashtag usage. The model then generates strengths, weaknesses, actionable suggestions, an improved version, and recommended tone/content type. A FastAPI backend handles file processing and AI communication, while a React/Vite frontend provides a responsive interface with upload, loading, error, and results states. API credentials are stored securely through environment variables, and the application can be deployed using Render for the backend and Vercel for the frontend.
-
----
+- Social-media-platform-specific optimization
+- User authentication
+- Analysis history
+- Multiple file processing
+- Exportable analysis reports
+- Platform-specific hashtag recommendations
+- A/B content comparison
+- Analytics dashboard
